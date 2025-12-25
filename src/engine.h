@@ -22,12 +22,14 @@
 #include <cstddef>
 #include <cstdint>
 #include <functional>
+#include <map>
 #include <optional>
 #include <string>
 #include <string_view>
 #include <utility>
 #include <vector>
 
+#include "history.h"
 #include "nnue/network.h"
 #include "numa.h"
 #include "position.h"
@@ -115,13 +117,14 @@ class Engine {
     Position     pos;
     StateListPtr states;
 
-    OptionsMap                               options;
-    ThreadPool                               threads;
-    TranspositionTable                       tt;
-    LazyNumaReplicated<Eval::NNUE::Networks> networks;
+    OptionsMap                                         options;
+    ThreadPool                                         threads;
+    TranspositionTable                                 tt;
+    LazyNumaReplicatedSystemWide<Eval::NNUE::Networks> networks;
 
     Search::SearchManager::UpdateContext  updateContext;
     std::function<void(std::string_view)> onVerifyNetworks;
+    std::map<NumaIndex, SharedHistories>  sharedHists;
 };
 
 }  // namespace Stockfish
